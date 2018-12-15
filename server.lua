@@ -12,16 +12,10 @@ ws.server('ws://0.0.0.0:8080', function (ws_peer)
         local message, err = ws_peer:read()
         if not message or message.opcode == nil then
             break
+        else
+            ws_peer:write(message.data)
         end
     end
 
     ws_peers[id] = nil -- remove after disconnection
 end)
-
-return {
-    push = function (data)
-        for _, ws_peer in pairs(ws_peers) do
-            ws_peer:write(json.encode(data)) -- send message to all subscribers
-        end
-    end
-}
